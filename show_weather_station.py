@@ -9,7 +9,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 import sqlite3
 
-sqlite_ws_file = '/var/log/temperature/weatherstation.sqlite'    # name of the sqlite database file
+sqlite_ws_file = '/home/freebox/temperature/weatherstation.sqlite'    # name of the sqlite database file
 table_ws_name = 'data'   # name of the table
 index_col = 'id'
 date_col = 'date' # name of the date column

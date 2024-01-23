@@ -1,4 +1,4 @@
 {	"model" : "TFA-TwinPlus", 		"id" : 47,	"type" : 1, 	"src" : "temperature_C", 	"name" : "Temperature" , "col" : 1, "row" : 1 }
-{	"model" : "TFA-TwinPlus", 		"id" : 47,	"type" : 2, 	"src" : "humidity", 		"name" : "Rain" , 	  "col" : 2, "row" : 1 }
 {	"model" : "Generic-Temperature", 	"id" : 97,	"type" : 1, 	"src" : "temperature_C", 	"name" : "Temperature" , "col" : 1, "row" : 1 }
 {	"model" : "Oregon-RTG", 		"id" : 120,	"type" : 1, 	"src" : "temperature_C", 	"name" : "Temperature" , "col" : 1, "row" : 2 }
+{	"model" : "TFA-TwinPlus", 		"id" : 47,	"type" : 2, 	"src" : "humidity", 		"name" : "Rain" , 	  "col" : 1, "row" : 3 }

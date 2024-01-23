@@ -65,16 +65,34 @@ def calc_rain_per_day(timestamp,rain):
         i=i+1
     return{'datestamp':datestamp, 'rain_per_day':rain_per_day}
 
+
+def getMaxSubplot(file):
+    max_col = 0
+    max_row = 0
+    for line in file:
+        d = json.loads(line)
+        col = d['col']
+        row = d['row']
+        if(col>max_col):
+            max_col=col
+        if(row>max_row):
+            max_row=row
+
+    return max_row,max_col
+
+
 def create_figure_ws(figdatestart,figdateend):
     fromdate = dt.strptime(figdatestart[0:10], '%Y-%m-%d')
     todate = dt.strptime(figdateend[0:10], '%Y-%m-%d')
 
-    max_row=2
-    print(max_row)
-    fig = make_subplots(rows=max_row, cols=2)
-    nbrow=1
-
+    print("open")
     file1 = open('/home/freebox/rpi_rtlsdr_weather_station/display.json', 'r')
+    #max_row,max_col=getMaxSubplot(file1)
+    max_row=4
+    max_col=1
+    print( max_row,max_col)
+    fig = make_subplots(rows=max_row, cols=max_col)
+
 
     for line in file1:
 
@@ -87,7 +105,6 @@ def create_figure_ws(figdatestart,figdateend):
         col = d['col']
         row = d['row']
 
-        print(model,src,col,row)
         print(model,src,col,row)
         dws = querywslog(model,src,fromdate,todate)
         # add traces

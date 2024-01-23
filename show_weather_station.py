@@ -36,7 +36,7 @@ def querywslog(model_name,col,fromdate,todate,):
     conn = sqlite3.connect(sqlite_ws_file)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute("SELECT * FROM {tn} WHERE {mc} = '{ma}' AND {dc} BETWEEN '{fd}' AND '{td}'". \
+    c.execute("SELECT * FROM {tn} WHERE {mc} like '%{ma}%' AND {dc} BETWEEN '{fd}' AND '{td}'". \
           format(tn=table_ws_name, dc=date_col, fd=fromdate, td=todate, mc=model_col, ma=model_name))
     rows = c.fetchall()
     for row in rows:
@@ -87,6 +87,7 @@ def create_figure_ws(figdatestart,figdateend):
         col = d['col']
         row = d['row']
 
+        print(model,src,col,row)
         print(model,src,col,row)
         dws = querywslog(model,src,fromdate,todate)
         # add traces

@@ -6,8 +6,9 @@ import sqlite3
 from datetime import datetime as dt
 import json
 import fileinput
+import getpass
 
-sqlite_file = '/home/freebox/temperature/weatherstation.sqlite'    # name of the sqlite database file
+sqlite_file = "/home/"+str(getpass.getuser())+"/data/weatherstation.sqlite"    # name of the sqlite database file
 table_name = 'data'   # name of the table to be created
 index_col = 'id_key'
 date_col = 'date' # name of the date column
@@ -17,10 +18,8 @@ time_col = 'time'# name of the time column
 # create new sqlite database
 # Connecting to the database file
 def create_database(d):
-
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    print('creating new table')
     c.execute('CREATE TABLE {tn} ({nf} {ft} PRIMARY KEY)'\
         .format(tn=table_name, nf=index_col, ft='INTEGER'))
     c.execute("ALTER TABLE {tn} ADD COLUMN '{cn}'"\

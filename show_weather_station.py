@@ -9,8 +9,10 @@ from datetime import datetime as dt
 from datetime import timedelta
 import sqlite3
 import json
+import getpass
 
-sqlite_ws_file = '/home/freebox/temperature/weatherstation.sqlite'    # name of the sqlite database file
+sqlite_ws_file = "/home/"+str(getpass.getuser())+"/data/weatherstation.sqlite"    # name of the sqlite database file
+config_file =  "/home/"+str(getpass.getuser())+"/rpi_rtlsdr_weather_station/display.json"    # name of the json config file
 table_ws_name = 'data'   # name of the table
 index_col = 'id'
 date_col = 'date' # name of the date column
@@ -32,7 +34,6 @@ def querywslog(model_name,col,fromdate,todate,):
     t_ws = []
     rain_mm_ws = []
 
-    print(model_name, col)
     conn = sqlite3.connect(sqlite_ws_file)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -56,7 +57,7 @@ def calc_rain_per_day(timestamp,rain):
             dt_object_prev = dt.strptime(timestamp[i-1], format)
             dt_object = dt.strptime(ts, format)
             if dt_object.date() > dt_object_prev.date():
-                print(dt_object_prev.date(), rain[i]- startrain)
+                #print(dt_object_prev.date(), rain[i]- startrain)
                 datestamp.append(dt_object_prev.date())
                 if rain[i] < startrain: # we got a reset
                     startrain = rain[i]
@@ -66,7 +67,10 @@ def calc_rain_per_day(timestamp,rain):
     return{'datestamp':datestamp, 'rain_per_day':rain_per_day}
 
 
-def getMaxSubplot(file):
+def getMaxSubplot(filename):
+
+    file = open(filename, 'r')
+
     max_col = 0
     max_row = 0
     for line in file:
@@ -77,23 +81,22 @@ def getMaxSubplot(file):
             max_col=col
         if(row>max_row):
             max_row=row
+        print(col, row,max_row,max_col)
 
-    return max_row,max_col
+    file.close()
+    return max_row+1,max_col
 
 
 def create_figure_ws(figdatestart,figdateend):
     fromdate = dt.strptime(figdatestart[0:10], '%Y-%m-%d')
     todate = dt.strptime(figdateend[0:10], '%Y-%m-%d')
 
-    print("open")
-    file1 = open('/home/freebox/rpi_rtlsdr_weather_station/display.json', 'r')
-    #max_row,max_col=getMaxSubplot(file1)
-    max_row=4
-    max_col=1
+
+    max_row,max_col=getMaxSubplot(config_file)
     print( max_row,max_col)
     fig = make_subplots(rows=max_row, cols=max_col)
 
-
+    file1 = open(config_file, 'r')
     for line in file1:
 
         d = json.loads(line)

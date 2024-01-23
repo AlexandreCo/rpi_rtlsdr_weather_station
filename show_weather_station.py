@@ -124,9 +124,10 @@ def create_figure_ws(figdatestart,figdateend):
         # Update yaxis properties
         fig.update_yaxes(title_text=name, row=row, col=col)
 
-    fig.update_layout(height=600,
+    fig.update_layout(height=800,
         title_text='log - {:s} - {:s}'.format(fromdate.strftime("%-d %B %Y"), todate.strftime("%-d %B %Y")),
-        paper_bgcolor="LightSteelBlue")
+        paper_bgcolor="LightSteelBlue",
+        showlegend=True, legend=dict(x=0,y=0),margin=dict(l=0, r=0, t=50, b=0))
 
     return(fig)
 

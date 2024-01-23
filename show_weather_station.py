@@ -36,8 +36,8 @@ def querywslog(model_name,col,fromdate,todate,):
     conn = sqlite3.connect(sqlite_ws_file)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute("SELECT * FROM {tn} WHERE {mc} like '%{ma}%' AND {dc} BETWEEN '{fd}' AND '{td}'". \
-          format(tn=table_ws_name, dc=date_col, fd=fromdate, td=todate, mc=model_col, ma=model_name))
+    c.execute("SELECT * FROM {tn} WHERE {mc} like '%{ma}%' AND {dc} BETWEEN '{fd}' AND '{td}' AND {cn} != \"\"". \
+          format(tn=table_ws_name, dc=date_col, fd=fromdate, td=todate, mc=model_col, ma=model_name, cn=col))
     rows = c.fetchall()
     for row in rows:
         timestamp.append(row["date"] + " " + row["time"])

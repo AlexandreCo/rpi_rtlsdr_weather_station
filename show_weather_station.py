@@ -111,7 +111,7 @@ def create_figure_ws(figdatestart,figdateend):
 
         if(type == 1 ):
             fig.add_trace(
-                go.Scatter(x=dws['timestamp'], y=dws['ws'], mode='markers+lines', name=model),
+                go.Scatter(x=dws['timestamp'], y=dws['ws'], mode='lines', name=model),
                 row=row, col=col
             )
         else:

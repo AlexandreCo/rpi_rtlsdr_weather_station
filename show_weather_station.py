@@ -29,7 +29,7 @@ todate = dt.now()
 fromdate = dt.now()-timedelta(weeks=2)
 
 
-def querywslog(model_name,col,fromdate,todate,):
+def querywslog(model_name,col,fromdate,todate,coef):
     timestamp = []
     t_ws = []
     rain_mm_ws = []
@@ -42,7 +42,7 @@ def querywslog(model_name,col,fromdate,todate,):
     rows = c.fetchall()
     for row in rows:
         timestamp.append(row["date"] + " " + row["time"])
-        t_ws.append(row[col])
+        t_ws.append(row[col]*coef)
     conn.close()
     return {'timestamp':timestamp, 'ws':t_ws}
 
@@ -65,6 +65,30 @@ def calc_rain_per_day(timestamp,rain):
                 startrain = rain[i]
         i=i+1
     return{'datestamp':datestamp, 'rain_per_day':rain_per_day}
+
+def calc_rain_per_hour(timestamp,rain):
+    i=0
+    format = "%Y-%m-%d %H:%M:%S"
+    startrain = rain[0]
+    datestamp = []
+    rain_per_hour=[]
+    for ts in timestamp:
+        if i>0:
+            dt_object_prev = dt.strptime(timestamp[i-1], format)
+            dt_object = dt.strptime(ts, format)
+
+            hour = dt_object.replace(minute=0, second=0)
+            prev_hour = dt_object_prev.replace(minute=0, second=0)
+            if hour != prev_hour:
+                # new hour
+                #print("hour", dt_object_prev, rain[i] - startrain)
+                datestamp.append(dt_object_prev)
+                if rain[i] < startrain:  # we got a reset
+                    startrain = rain[i]
+                rain_per_hour.append(round(rain[i] - startrain, 1))
+                startrain = rain[i]
+        i=i+1
+    return{'datestamp':datestamp, 'rain_per_hour':rain_per_hour}
 
 
 def getMaxSubplot(filename):
@@ -107,9 +131,10 @@ def create_figure_ws(figdatestart,figdateend):
         name = d['name']
         col = d['col']
         row = d['row']
+        coef = d['coef']
 
         print(model,src,col,row)
-        dws = querywslog(model,src,fromdate,todate)
+        dws = querywslog(model,src,fromdate,todate,coef)
         # add traces
 
         if(type == 1 ):
@@ -117,7 +142,14 @@ def create_figure_ws(figdatestart,figdateend):
                 go.Scatter(x=dws['timestamp'], y=dws['ws'], mode='lines', name=model),
                 row=row, col=col
             )
-        else:
+        elif (type == 2):
+            rph = calc_rain_per_hour(dws['timestamp'], dws['ws'])
+            mname = 'rain ' + model
+            fig.add_trace(
+                go.Bar(x=rph['datestamp'], y=rph['rain_per_hour'], text=rph['rain_per_hour'], name=model, marker_color='blue'),
+                row=row, col=col
+            )
+        elif (type == 3):
             rpd = calc_rain_per_day(dws['timestamp'],dws['ws'])
             mname = 'rain ' + model
             fig.add_trace(
